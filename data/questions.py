@@ -1,0 +1,117 @@
+QUESTIONS = {
+    "Noção de Integral": [
+        {
+            "enunciado": "O que representa ∫[a,b] f(x)dx geometricamente?",
+            "opts": ["Área sob a curva", "Derivada de f(x)", "Comprimento da curva", "Valor máximo"],
+            "correta": 0,
+            "feedback_ok": "Correto! A integral é a área entre a curva e o eixo X no intervalo [a,b].",
+            "feedback_erro": "Errado. A integral definida representa a ÁREA sob a curva no intervalo.",
+        },
+        {
+            "enunciado": "A soma de Riemann aproxima a integral usando:",
+            "opts": ["Retângulos", "Triângulos", "Círculos", "Parábolas"],
+            "correta": 0,
+            "feedback_ok": "Correto! Retângulos de largura Δx são somados para aproximar a área.",
+            "feedback_erro": "Errado. A soma de Riemann usa RETÂNGULOS de largura Δx.",
+        },
+        {
+            "enunciado": "Quando mais retângulos usamos na soma de Riemann:",
+            "opts": ["Aproximação fica mais precisa", "Aproximação piora", "Nada muda", "Integral fica menor"],
+            "correta": 0,
+            "feedback_ok": "Exato! Mais retângulos → Δx menor → melhor aproximação da área real.",
+            "feedback_erro": "Errado. Mais retângulos tornam a aproximação mais precisa.",
+        },
+    ],
+    "Integral Indefinida": [
+        {
+            "enunciado": "∫ x³ dx = ?",
+            "opts": ["x⁴/4 + C", "3x² + C", "x⁴ + C", "x²/2 + C"],
+            "correta": 0,
+            "feedback_ok": "Correto! Regra da potência: ∫xⁿdx = xⁿ⁺¹/(n+1) + C.",
+            "feedback_erro": "Errado. Regra da potência: ∫x³dx = x⁴/4 + C.",
+        },
+        {
+            "enunciado": "∫ 5 dx = ?",
+            "opts": ["5x + C", "5x² + C", "0 + C", "5/x + C"],
+            "correta": 0,
+            "feedback_ok": "Certo! A integral de constante k é kx + C.",
+            "feedback_erro": "Errado. ∫k dx = kx + C.",
+        },
+        {
+            "enunciado": "O '+C' na integral indefinida representa:",
+            "opts": ["Família de primitivas", "Erro de cálculo", "Limite superior", "Coeficiente fixo"],
+            "correta": 0,
+            "feedback_ok": "Correto! +C representa todas as funções com a mesma derivada.",
+            "feedback_erro": "Errado. +C é a constante de integração — família de primitivas.",
+        },
+    ],
+    "Substituição": [
+        {
+            "enunciado": "Para ∫ 2x·cos(x²)dx, qual u escolher?",
+            "opts": ["u = x²", "u = cos(x)", "u = 2x", "u = x"],
+            "correta": 0,
+            "feedback_ok": "Certo! u=x² → du=2x dx já aparece no integrando.",
+            "feedback_erro": "Errado. Escolha u=x² pois du=2x dx está no integrando.",
+        },
+        {
+            "enunciado": "Se u = 3x+1, então du = ?",
+            "opts": ["3 dx", "dx", "3x dx", "1 dx"],
+            "correta": 0,
+            "feedback_ok": "Correto! d(3x+1)/dx = 3, então du = 3dx.",
+            "feedback_erro": "Errado. Derivando u=3x+1: du = 3dx.",
+        },
+        {
+            "enunciado": "A substituição transforma ∫f(g(x))g'(x)dx em:",
+            "opts": ["∫f(u)du", "∫f(u)g(u)du", "∫f'(u)du", "∫g(u)du"],
+            "correta": 0,
+            "feedback_ok": "Exato! Com u=g(x), du=g'(x)dx a integral simplifica para ∫f(u)du.",
+            "feedback_erro": "Errado. A substituição transforma em ∫f(u)du.",
+        },
+    ],
+    "Integração por Partes": [
+        {
+            "enunciado": "A fórmula de integração por partes é:",
+            "opts": ["∫u dv = uv − ∫v du", "∫u dv = uv + ∫v du", "∫u dv = u/v + C", "∫u dv = uv·∫v du"],
+            "correta": 0,
+            "feedback_ok": "Correto! ∫u dv = uv − ∫v du.",
+            "feedback_erro": "Errado. A fórmula correta é ∫u dv = uv − ∫v du.",
+        },
+        {
+            "enunciado": "Para ∫ x·eˣ dx, qual a melhor escolha de u?",
+            "opts": ["u = x", "u = eˣ", "u = x·eˣ", "u = 1"],
+            "correta": 0,
+            "feedback_ok": "Certo! u=x pois du=dx simplifica; dv=eˣdx → v=eˣ.",
+            "feedback_erro": "Errado. u=x é melhor pois du=dx é mais simples de lidar.",
+        },
+        {
+            "enunciado": "∫ x·eˣ dx = ?",
+            "opts": ["xeˣ − eˣ + C", "xeˣ + eˣ + C", "x²eˣ/2 + C", "eˣ + C"],
+            "correta": 0,
+            "feedback_ok": "Correto! Por partes: uv−∫vdu = xeˣ − ∫eˣdx = xeˣ − eˣ + C.",
+            "feedback_erro": "Errado. Por partes com u=x, dv=eˣdx: xeˣ − eˣ + C.",
+        },
+    ],
+    "Integral Definida": [
+        {
+            "enunciado": "∫[0,2] x dx = ?",
+            "opts": ["2", "4", "1", "8"],
+            "correta": 0,
+            "feedback_ok": "Correto! F(x)=x²/2 → F(2)−F(0) = 2−0 = 2.",
+            "feedback_erro": "Errado. F(x)=x²/2, então F(2)−F(0) = 2.",
+        },
+        {
+            "enunciado": "∫[1,3] 2x dx = ?",
+            "opts": ["8", "4", "6", "10"],
+            "correta": 0,
+            "feedback_ok": "Correto! F(x)=x² → F(3)−F(1) = 9−1 = 8.",
+            "feedback_erro": "Errado. F(x)=x² → F(3)−F(1) = 9−1 = 8.",
+        },
+        {
+            "enunciado": "O Teorema Fundamental do Cálculo afirma que ∫[a,b]f dx = ?",
+            "opts": ["F(b) − F(a)", "F(a) + F(b)", "F(b) · F(a)", "F'(b)"],
+            "correta": 0,
+            "feedback_ok": "Exato! O TFC conecta integral e primitiva via F(b)−F(a).",
+            "feedback_erro": "Errado. O TFC afirma que ∫[a,b]f dx = F(b)−F(a).",
+        },
+    ],
+}
