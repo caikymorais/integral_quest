@@ -14,7 +14,7 @@ class Phase4Water(BasePhase):
 
     def _build_level(self):
         q = QUESTIONS[self.region][self.q_index]
-        self.player      = PhysicsPlayer(WIDTH // 2 - 14, HEIGHT - 280)
+        self.player      = PhysicsPlayer(WIDTH // 2 - 14, HEIGHT - 368)
         self.water_y     = float(HEIGHT + 80)
         self.water_speed = 0.15
         self.stage       = "u"
@@ -25,19 +25,20 @@ class Phase4Water(BasePhase):
         self.correct_dv = q["opts"][(q["correta"] + 1) % len(q["opts"])]
 
         self.platforms = [
-            # Plataforma sólida chão
-            {"rect": pygame.Rect(0, HEIGHT - 160, 160, 18),
+            # Plataformas sólidas de travessia — mais separadas das respostas
+            {"rect": pygame.Rect(0,   HEIGHT - 120, 160, 18),
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
-             "visible": True, "base_y": float(HEIGHT - 160), "bob": 0.0, "side": 0},
-            {"rect": pygame.Rect(740, HEIGHT - 160, 160, 18),
+             "visible": True, "base_y": float(HEIGHT - 120), "bob": 0.0, "side": 0},
+            {"rect": pygame.Rect(740, HEIGHT - 120, 160, 18),
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
-             "visible": True, "base_y": float(HEIGHT - 160), "bob": 0.0, "side": 1},
-            {"rect": pygame.Rect(330, HEIGHT - 260, 240, 18),
+             "visible": True, "base_y": float(HEIGHT - 120), "bob": 0.0, "side": 1},
+            # Plataforma segura central — player nasce aqui
+            {"rect": pygame.Rect(330, HEIGHT - 320, 240, 18),
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
-             "visible": True, "base_y": float(HEIGHT - 260), "bob": 0.0, "side": 0},
+             "visible": True, "base_y": float(HEIGHT - 320), "bob": 0.0, "side": 0},
         ]
 
         opts     = q["opts"][:]
@@ -47,7 +48,7 @@ class Phase4Water(BasePhase):
         for i, opt in enumerate(shuffled):
             side       = i % 2
             x          = (50 + (i // 2) * 200) if side == 0 else (WIDTH // 2 + 50 + (i // 2) * 200)
-            y          = HEIGHT - 220 - (i // 2) * 55
+            y          = HEIGHT - 200 - (i // 2) * 55
             is_correct = (opt == self.correct_u or opt == self.correct_dv)
             self.platforms.append({
                 "rect":      pygame.Rect(x, y, 175, 26),
@@ -55,7 +56,7 @@ class Phase4Water(BasePhase):
                 "opt":       opt,
                 "correct":   is_correct,
                 "state":     "idle",
-                # Verde para gabarito (remova is_correct e deixe só a cor normal após testes)
+                # Verde = gabarito (remova após testes)
                 "color":     GREEN if is_correct else (BLUE if side == 0 else PURPLE_DARK),
                 "is_floor":  False,
                 "is_answer": True,
@@ -210,6 +211,8 @@ class Phase4Water(BasePhase):
 
     def _extra_draw(self):
         s = self.game.screen
+
+        # Etapa atual
         stage_txt = f"Etapa: escolha  {'u' if self.stage == 'u' else 'dv'}"
         if self.chosen_u:
             stage_txt += f"   (u = {self.chosen_u} ✓)"
@@ -219,3 +222,9 @@ class Phase4Water(BasePhase):
         # Fórmula
         formula = self.font.render("∫u dv  =  uv  −  ∫v du", True, GRAY)
         s.blit(formula, (WIDTH//2 - formula.get_width()//2, 115))
+
+        # Legenda das plataformas seguras
+        hint = self.font_sm.render(
+            "Plataformas cinzas = zona segura  |  Coloridas = respostas",
+            True, (120, 120, 140))
+        s.blit(hint, (WIDTH//2 - hint.get_width()//2, HEIGHT - 38))

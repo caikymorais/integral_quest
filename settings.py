@@ -49,3 +49,10 @@ REGION_COLORS = [
     (255, 100, 50),    # orange
 ]
 REGION_ICONS = ["∫", "∞", "u", "∂", "∑"]
+TREINO_ICON = "📖"
+
+# === SISTEMA DE PONTOS ===
+PONTOS_POR_ACERTO_PRIMEIRA  = 15   # acerto de primeira
+PONTOS_POR_ACERTO_SEGUNDA   = 8    # acerto após erro
+PONTOS_BONUS_FASE_PERFEITA  = 20   # todas as questões de primeira
+PONTOS_MINIMOS_CHEFAO       = 120  # mínimo para liberar chefão

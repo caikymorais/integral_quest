@@ -41,7 +41,7 @@ class BasePhase:
 
     def _award_points(self, correct):
         if correct:
-            pts = 10 if self.first_try else 5
+            pts = PONTOS_POR_ACERTO_PRIMEIRA if self.first_try else PONTOS_POR_ACERTO_SEGUNDA
             self.game.score += pts
             self.hits += 1
             return pts
@@ -53,13 +53,18 @@ class BasePhase:
         self.q_index += 1
         if self.q_index >= len(qs):
             pct = self.hits / len(qs)
+            # Bônus fase perfeita
+            if self.hits == len(qs):
+                self.game.score += PONTOS_BONUS_FASE_PERFEITA
             if pct >= 0.7:
                 self.game.unlock_next(self.region)
+                # Verifica se libera chefão
+                self.game.check_boss_unlock()
             self.game.go_to_results(self.hits, len(qs))
             return
-        self.answered  = False
+        self.answered = False
         self.first_try = True
-        self.attempts  = 0
+        self.attempts = 0
         self._build_level()
 
     def handle_events(self):
