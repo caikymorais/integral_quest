@@ -55,4 +55,4 @@ TREINO_ICON = "📖"
 PONTOS_POR_ACERTO_PRIMEIRA  = 15   # acerto de primeira
 PONTOS_POR_ACERTO_SEGUNDA   = 8    # acerto após erro
 PONTOS_BONUS_FASE_PERFEITA  = 20   # todas as questões de primeira
-PONTOS_MINIMOS_CHEFAO       = 120  # mínimo para liberar chefão
+PONTOS_MINIMOS_CHEFAO       = 250  # mínimo para liberar chefão

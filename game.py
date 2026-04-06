@@ -14,6 +14,8 @@ class Game:
         self.state          = "menu"
         self.current_region = None
         self.screens        = {}
+        self.completed = [False] * len(REGIONS)
+        self.boss_just_unlocked = False
 
     def run(self):
         from screens.menu       import MenuScreen
@@ -87,12 +89,21 @@ class Game:
             self.unlocked[idx + 1] = True
 
     def check_boss_unlock(self):
-        all_done = all(self.unlocked[i] for i in range(len(REGIONS)))
-        if all_done and self.score >= PONTOS_MINIMOS_CHEFAO:
+        """Libera o chefão somente se TODAS as fases foram concluídas e pontos suficientes."""
+        self.boss_just_unlocked = False
+        all_done = all(self.completed)
+        if all_done and self.score >= PONTOS_MINIMOS_CHEFAO and not self.boss_unlocked:
             self.boss_unlocked = True
+            self.boss_just_unlocked = True
+
+    def mark_phase_completed(self, region_name):
+        idx = REGIONS.index(region_name)
+        self.completed[idx] = True
 
     def reset_game(self):
         self.score         = 0
         self.unlocked      = [True] + [False] * len(REGIONS)
         self.boss_unlocked = False
         self.go_to_menu()
+        self.completed = [False] * len(REGIONS)
+        self.boss_just_unlocked = False
