@@ -11,19 +11,17 @@ class Phase1Lava(BasePhase):
 
     def _build_level(self):
         q = QUESTIONS[self.region][self.q_index]
-        self.lava_y      = float(HEIGHT + 200)  # começa bem abaixo
-        self.lava_speed  = 0.0                  # parada no início
-        self.lava_rising = False                 # só sobe após erro
+        self.lava_y      = float(HEIGHT + 200)
+        self.lava_speed  = 0.0
+        self.lava_rising = False
         self.player      = PhysicsPlayer(WIDTH // 2 - 14, HEIGHT - 160)
 
-        # Plataforma chão
         self.platforms = [{
             "rect": pygame.Rect(0, HEIGHT - 60, WIDTH, 20),
             "label": "", "correct": False, "state": "idle",
             "color": DARK_GRAY, "is_floor": True
         }]
 
-        # Plataformas de resposta
         n = len(q["opts"])
         xs = [int(WIDTH * (i + 1) / (n + 1)) - 90 for i in range(n)]
         for i, (opt, x) in enumerate(zip(q["opts"], xs)):
@@ -39,7 +37,6 @@ class Phase1Lava(BasePhase):
                 "bob":     random.uniform(0, math.pi * 2),
             })
 
-        # Retângulos de Riemann decorativos
         self.rects_riemann = []
         for i in range(12):
             rx = 40 + i * 68
@@ -57,19 +54,15 @@ class Phase1Lava(BasePhase):
         flat = [{"rect": p["rect"]} for p in self.platforms]
         self.player.update(keys, flat)
 
-        # Bob das plataformas
         for p in self.platforms:
             if not p.get("is_floor"):
                 p["rect"].y = int(p["base_y"] + math.sin(self.tick * 0.03 + p["bob"]) * 5)
 
-        # Lava só sobe se ativada por erro
         if self.lava_rising:
             self.lava_y -= self.lava_speed
-            # Para de subir quando o jogador acerta
             if self.answered:
                 self.lava_speed = max(0, self.lava_speed - 0.05)
 
-        # Lava mata
         if self.player.y + self.player.h >= self.lava_y:
             self.player.die()
             return
@@ -92,8 +85,8 @@ class Phase1Lava(BasePhase):
                     else:
                         p["color"]       = RED
                         self.first_try   = False
-                        self.lava_rising = True          # ativa a lava
-                        self.lava_speed  = min(self.lava_speed + 0.5, 2.5)  # acelera a cada erro
+                        self.lava_rising = True
+                        self.lava_speed  = min(self.lava_speed + 0.5, 2.5)
                         self._set_feedback(False,
                             f"✗ {QUESTIONS[self.region][self.q_index]['feedback_erro']}",
                             duration=90)
@@ -105,14 +98,12 @@ class Phase1Lava(BasePhase):
             t = row / HEIGHT
             pygame.draw.line(s, (int(20+t*30), int(8+t*10), int(15+t*10)), (0,row),(WIDTH,row))
 
-        # Retângulos de Riemann decorativos
         for i, (rx, ry, rw, rh) in enumerate(self.rects_riemann):
             pygame.draw.rect(s, (40+i*6, 30, 80), (rx, ry-rh, rw, rh))
             pygame.draw.rect(s, (60,40,100), (rx, ry-rh, rw, rh), 1)
 
-        # Aviso quando lava está parada
         if not self.lava_rising and not self.answered:
-            warn = self.font_sm.render("Erre uma questão e a lava começa a subir! 🔥", True, ORANGE)
+            warn = self.font_sm.render("Erre uma questão e a lava começa a subir!", True, ORANGE)
             s.blit(warn, (WIDTH//2 - warn.get_width()//2, 76))
 
     def _draw_hazards(self):
@@ -132,7 +123,7 @@ class Phase1Lava(BasePhase):
             bright = int(140 + 80 * math.sin(px * 0.02 + self.tick * 0.06))
             pygame.draw.circle(s, (255, bright, 0), (px, lava_top + int(wave)), 2)
 
-        lbl = self.font_sm.render("🔥 LAVA", True, YELLOW)
+        lbl = self.font_sm.render("LAVA", True, YELLOW)
         s.blit(lbl, (8, min(lava_top + 4, HEIGHT - 20)))
 
     def _draw_platforms(self):

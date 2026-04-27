@@ -2,87 +2,71 @@ import pygame
 import math
 from settings import *
 
+_CHAR_W, _CHAR_H = 80, 120
+_CHAR_CX, _CHAR_CY = _CHAR_W // 2, 45
 
-def draw_character(surface, cx, cy, scale=1.0, tick=0, facing=1, on_ground=True, dead=False):
-    s = scale
-    run = math.sin(tick * 0.2) * 7 * s if (on_ground and not dead) else 0
-    air = math.sin(tick * 0.1) * 2 * s if not on_ground else 0
-    rot = math.radians(90 * min(1.0, tick / 10)) if dead else 0
 
-    def pt(x, y):
-        # Rotaciona em torno de (cx, cy) se morto
-        if dead:
-            dx, dy = x - cx, y - cy
-            nx = dx * math.cos(rot) - dy * math.sin(rot)
-            ny = dx * math.sin(rot) + dy * math.cos(rot)
-            return (int(cx + nx), int(cy + ny))
-        return (int(x), int(y))
+def draw_character(surface, cx, cy, scale=1.0, tick=0, facing=1,
+                   on_ground=True, dead=False):
+    run       = math.sin(tick * 0.2) * 7 if (on_ground and not dead) else 0
+    air       = math.sin(tick * 0.1) * 2 if not on_ground else 0
+    arm_swing = math.sin(tick * 0.2) * 10 if on_ground else 0
+    rot_angle = 90 * min(1.0, tick / 10) if dead else 0
 
-    # --- Pernas ---
-    leg_l = pygame.Rect(int(cx-12*s), int(cy+18*s+air), int(10*s), int(22*s+run))
-    leg_r = pygame.Rect(int(cx+2*s),  int(cy+18*s+air), int(10*s), int(22*s-run))
-    pygame.draw.rect(surface, PANTS, leg_l, border_radius=4)
-    pygame.draw.rect(surface, PANTS, leg_r, border_radius=4)
-    # Sapatos
-    pygame.draw.ellipse(surface, SHOE, (int(cx-14*s), int(cy+38*s+abs(run)+air), int(14*s), int(8*s)))
-    pygame.draw.ellipse(surface, SHOE, (int(cx+2*s),  int(cy+38*s+abs(run)+air), int(14*s), int(8*s)))
+    cs = pygame.Surface((_CHAR_W, _CHAR_H), pygame.SRCALPHA)
+    lx, ly = _CHAR_CX, _CHAR_CY
 
-    # --- Corpo ---
-    body = pygame.Rect(int(cx-13*s), int(cy+air), int(26*s), int(22*s))
-    pygame.draw.rect(surface, SHIRT, body, border_radius=6)
-    # Detalhe camisa — listra
-    pygame.draw.rect(surface, BLUE_LIGHT,
-        (int(cx-13*s), int(cy+8*s+air), int(26*s), int(5*s)))
+    a = int(air)
+    r = int(run)
+    sw = int(arm_swing)
 
-    # --- Braços ---
-    arm_swing = math.sin(tick * 0.2) * 10 * s if on_ground else 0
-    pygame.draw.rect(surface, SKIN,
-        (int(cx-22*s), int(cy+2*s+arm_swing+air), int(9*s), int(18*s)), border_radius=5)
-    pygame.draw.rect(surface, SKIN,
-        (int(cx+13*s), int(cy+2*s-arm_swing+air), int(9*s), int(18*s)), border_radius=5)
-    # Luvas
-    pygame.draw.circle(surface, (220,80,80),
-        (int(cx-17*s), int(cy+18*s+arm_swing+air)), int(5*s))
-    pygame.draw.circle(surface, (220,80,80),
-        (int(cx+17*s), int(cy+18*s-arm_swing+air)), int(5*s))
+    pygame.draw.rect(cs, PANTS, (lx-12, ly+18+a, 10, 22+r), border_radius=4)
+    pygame.draw.rect(cs, PANTS, (lx+2, ly+18+a, 10, 22-r), border_radius=4)
 
-    # --- Pescoço ---
-    pygame.draw.rect(surface, SKIN,
-        (int(cx-4*s), int(cy-5*s+air), int(8*s), int(7*s)))
+    pygame.draw.ellipse(cs, SHOE, (lx-14, ly+38+abs(r)+a, 14, 8))
+    pygame.draw.ellipse(cs, SHOE, (lx+2, ly+38+abs(r)+a, 14, 8))
 
-    # --- Cabeça ---
-    head_rect = (int(cx-16*s), int(cy-30*s+air), int(32*s), int(28*s))
-    pygame.draw.ellipse(surface, SKIN, head_rect)
-    # Cabelo
-    pygame.draw.ellipse(surface, HAIR,
-        (int(cx-16*s), int(cy-32*s+air), int(32*s), int(16*s)))
-    # Franja
-    pygame.draw.rect(surface, HAIR,
-        (int(cx-16*s), int(cy-20*s+air), int(10*s), int(6*s)), border_radius=3)
+    pygame.draw.rect(cs, SHIRT, (lx-13, ly+a, 26, 22), border_radius=6)
+    pygame.draw.rect(cs, BLUE_LIGHT, (lx-13, ly+8+a, 26, 5))
 
-    # Olhos
-    eye_x = cx + facing * 5 * s
-    pygame.draw.circle(surface, WHITE, (int(eye_x), int(cy-17*s+air)), int(5*s))
-    pygame.draw.circle(surface, (30,30,80), (int(eye_x+facing*1.5*s), int(cy-17*s+air)), int(3*s))
-    pygame.draw.circle(surface, WHITE, (int(eye_x+facing*1*s), int(cy-18*s+air)), int(1*s))  # reflexo
+    pygame.draw.rect(cs, SKIN, (lx-22, ly+2+sw+a, 9, 18), border_radius=5)
+    pygame.draw.rect(cs, SKIN, (lx+13, ly+2-sw+a, 9, 18), border_radius=5)
+    pygame.draw.circle(cs, (220, 80, 80), (lx-17, ly+18+sw+a), 5)
+    pygame.draw.circle(cs, (220, 80, 80), (lx+17, ly+18-sw+a), 5)
+
+    pygame.draw.rect(cs, SKIN, (lx-4, ly-5+a, 8, 7))
+
+    pygame.draw.ellipse(cs, SKIN, (lx-16, ly-30+a, 32, 28))
+    pygame.draw.ellipse(cs, HAIR, (lx-16, ly-32+a, 32, 16))
+    pygame.draw.rect(cs, HAIR, (lx-16, ly-20+a, 10, 6), border_radius=3)
+
+    pygame.draw.circle(cs, WHITE, (lx+5, ly-17+a), 5)
+    pygame.draw.circle(cs, (30, 30, 80), (lx+7, ly-17+a), 3)
+    pygame.draw.circle(cs, WHITE, (lx+6, ly-18+a), 1)
 
     if dead:
-        # X nos olhos
-        pygame.draw.line(surface, RED,
-            (int(eye_x-3*s), int(cy-20*s+air)),
-            (int(eye_x+3*s), int(cy-14*s+air)), max(1,int(2*s)))
-        pygame.draw.line(surface, RED,
-            (int(eye_x+3*s), int(cy-20*s+air)),
-            (int(eye_x-3*s), int(cy-14*s+air)), max(1,int(2*s)))
+        pygame.draw.line(cs, RED, (lx+2, ly-20+a), (lx+8, ly-14+a), 2)
+        pygame.draw.line(cs, RED, (lx+8, ly-20+a), (lx+2, ly-14+a), 2)
     else:
-        # Sorriso
-        pygame.draw.arc(surface, (200, 100, 100),
-            (int(cx-7*s), int(cy-13*s+air), int(14*s), int(8*s)),
-            math.pi+0.3, 2*math.pi-0.3, max(1,int(2*s)))
+        pygame.draw.arc(cs, (200, 100, 100),
+                        (lx-7, ly-13+a, 14, 8),
+                        math.pi + 0.3, 2 * math.pi - 0.3, 2)
 
-    # Capacete/boné
-    pygame.draw.rect(surface, BLUE_DARK,
-        (int(cx-16*s), int(cy-33*s+air), int(32*s), int(8*s)), border_radius=5)
+    pygame.draw.rect(cs, BLUE_DARK, (lx-16, ly-33+a, 32, 8), border_radius=5)
+
+    if scale != 1.0:
+        new_w = max(1, int(_CHAR_W * scale))
+        new_h = max(1, int(_CHAR_H * scale))
+        cs = pygame.transform.smoothscale(cs, (new_w, new_h))
+
+    if facing == -1:
+        cs = pygame.transform.flip(cs, True, False)
+
+    if rot_angle > 0:
+        cs = pygame.transform.rotate(cs, -rot_angle)
+
+    rect = cs.get_rect(center=(int(cx), int(cy)))
+    surface.blit(cs, rect)
 
 
 class PhysicsPlayer:
@@ -113,14 +97,17 @@ class PhysicsPlayer:
             self.y += self.vy
             return
 
-        if keys[pygame.K_LEFT]  or keys[pygame.K_a]:
-            self.vx = -self.speed; self.facing = -1
+        if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            self.vx = -self.speed
+            self.facing = -1
         elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-            self.vx = self.speed;  self.facing = 1
+            self.vx = self.speed
+            self.facing = 1
         else:
             self.vx *= 0.75
 
-        if (keys[pygame.K_SPACE] or keys[pygame.K_UP] or keys[pygame.K_w]) and self.on_ground:
+        if (keys[pygame.K_SPACE] or keys[pygame.K_UP]
+                or keys[pygame.K_w]) and self.on_ground:
             self.vy = self.jump_force
 
         self.vy = min(self.vy + self.gravity, 20)
@@ -146,11 +133,12 @@ class PhysicsPlayer:
             self.vy = -8
 
     def draw(self, surface, scale=1.0):
+        anim_tick = self.dead_timer if self.dead else self.tick
         draw_character(surface,
                        self.x + self.w // 2,
                        self.y + self.h // 2 - 4,
                        scale=scale,
-                       tick=self.tick,
+                       tick=anim_tick,
                        facing=self.facing,
                        on_ground=self.on_ground,
                        dead=self.dead)

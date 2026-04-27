@@ -3,8 +3,6 @@ from settings import *
 from screens.player import PhysicsPlayer
 
 class BasePhase:
-    """Motor base: gerencia player, plataformas, vidas, pontuação e feedback."""
-
     LIVES = 3
 
     def __init__(self, game, region):
@@ -29,7 +27,6 @@ class BasePhase:
         self.player         = None
         self._setup()
 
-    # ── Subclasses implementam ────────────────────────────────────────────
     def _setup(self): pass
     def _build_level(self): pass
     def _update_hazards(self): pass
@@ -39,7 +36,6 @@ class BasePhase:
     def _extra_draw(self): pass
     def _update_phase(self): pass
     def _handle_phase_event(self, event): pass
-    # ──────────────────────────────────────────────────────────────────────
 
     def _award_points(self, correct):
         if correct:
@@ -57,11 +53,9 @@ class BasePhase:
         if self.q_index >= len(qs):
             pct = self.hits / len(qs)
 
-            # bônus fase perfeita
             if self.hits == len(qs):
                 self.game.score += PONTOS_BONUS_FASE_PERFEITA
 
-            # só considera fase concluída se passou
             if pct >= 0.7:
                 self.game.mark_phase_completed(self.region)
                 self.game.unlock_next(self.region)

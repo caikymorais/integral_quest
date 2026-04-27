@@ -3,9 +3,8 @@ from settings import *
 from screens.player import draw_character
 
 PORTAL_POSITIONS = [(110,460),(270,310),(450,190),(630,310),(790,460)]
-BOSS_POS         = (WIDTH // 2, 480)   # canto inferior centro — longe do portal 3
-TREINO_POS       = (WIDTH // 2, 80)    # topo centro
-
+BOSS_POS         = (WIDTH // 2, 480)
+TREINO_POS       = (WIDTH // 2, 80)
 class MapPlayer:
     def __init__(self):
         self.x, self.y = float(WIDTH//2), float(HEIGHT//2)
@@ -59,36 +58,36 @@ class MapScreen:
         keys = pygame.key.get_pressed()
         self.player.update(keys)
 
-        # Partículas portais normais
         for i, pos in enumerate(PORTAL_POSITIONS):
             if self.game.unlocked[i] and random.random() < 0.3:
                 angle = random.uniform(0, math.pi*2)
+                speed = random.uniform(0.5, 2)
                 self.particles.append({
                     "x": float(pos[0]), "y": float(pos[1]),
-                    "vx": math.cos(angle)*random.uniform(0.5,2),
-                    "vy": math.sin(angle)*random.uniform(0.5,2)-1,
+                    "vx": math.cos(angle) * speed,
+                    "vy": math.sin(angle) * speed - 1,
                     "life": random.randint(20,50),
                     "color": REGION_COLORS[i],
                 })
 
-        # Partículas portal chefão
         if self.game.boss_unlocked and random.random() < 0.4:
             angle = random.uniform(0, math.pi*2)
+            speed = random.uniform(0.5, 2.5)
             self.particles.append({
                 "x": float(BOSS_POS[0]), "y": float(BOSS_POS[1]),
-                "vx": math.cos(angle)*random.uniform(0.5,2.5),
-                "vy": math.sin(angle)*random.uniform(0.5,2.5)-1,
+                "vx": math.cos(angle) * speed,
+                "vy": math.sin(angle) * speed - 1,
                 "life": random.randint(20,50),
                 "color": (220,50,50),
             })
 
-        # Partículas portal treino
         if random.random() < 0.25:
             angle = random.uniform(0, math.pi*2)
+            speed = random.uniform(0.3, 1.5)
             self.particles.append({
                 "x": float(TREINO_POS[0]), "y": float(TREINO_POS[1]),
-                "vx": math.cos(angle)*random.uniform(0.3,1.5),
-                "vy": math.sin(angle)*random.uniform(0.3,1.5)-0.5,
+                "vx": math.cos(angle) * speed,
+                "vy": math.sin(angle) * speed - 0.5,
                 "life": random.randint(20,45),
                 "color": (200,180,80),
             })
@@ -101,21 +100,18 @@ class MapScreen:
             self.portal_cooldown -= 1
             return
 
-        # Portais normais
         for i, portal in enumerate(self.portals):
             if self.player.rect.colliderect(portal) and self.game.unlocked[i]:
                 self.portal_cooldown = 30
                 self.game.go_to_challenge(REGIONS[i])
                 return
 
-        # Portal chefão
         if self.game.boss_unlocked:
             if self.player.rect.colliderect(self.boss_portal):
                 self.portal_cooldown = 30
                 self.game.go_to_boss()
                 return
 
-        # Portal treino
         if self.player.rect.colliderect(self.treino_portal):
             self.portal_cooldown = 30
             self.game.go_to_treino()
@@ -125,29 +121,24 @@ class MapScreen:
         s = self.game.screen
         s.fill(BG_COLOR)
 
-        # Gradiente fundo
         for row in range(0, HEIGHT, 3):
             t = row / HEIGHT
             pygame.draw.line(s,
                 (int(8+t*10), int(10+t*12), int(25+t*18)),
                 (0, row), (WIDTH, row))
 
-        # Estrelas
         for sx, sy, sr in self.stars:
             tw = int(120 + 80*math.sin(self.tick*0.04+sx))
             pygame.draw.circle(s, (tw,tw,tw), (sx,sy), int(sr))
 
-        # Partículas
         for p in self.particles:
             col = tuple(min(255,c) for c in p["color"])
             pygame.draw.circle(s, col, (int(p["x"]),int(p["y"])), 2)
 
-        # Trilha entre portais normais
         for i in range(len(PORTAL_POSITIONS)-1):
             col = REGION_COLORS[i] if self.game.unlocked[i+1] else (40,40,60)
             pygame.draw.line(s, col, PORTAL_POSITIONS[i], PORTAL_POSITIONS[i+1], 3)
 
-        # ── Portais normais ────────────────────────────────────────────────
         for i, (pos, portal) in enumerate(zip(PORTAL_POSITIONS, self.portals)):
             unlocked = self.game.unlocked[i]
             col = REGION_COLORS[i] if unlocked else (45,45,65)
@@ -167,7 +158,6 @@ class MapScreen:
             lbl = self.font.render(REGIONS[i], True, WHITE if unlocked else GRAY)
             s.blit(lbl, (pos[0]-lbl.get_width()//2, pos[1]+42))
 
-        # ── Portal Treino ──────────────────────────────────────────────────
         glow_r = int(36 + 6*math.sin(self.tick*0.06))
         gs = pygame.Surface((glow_r*2+20, glow_r*2+20), pygame.SRCALPHA)
         pygame.draw.circle(gs, (200,180,80,40), (glow_r+10,glow_r+10), glow_r+10)
@@ -181,7 +171,6 @@ class MapScreen:
         sub_t = pygame.font.SysFont("Arial",11).render("Manuscrito do Cálculo", True, (160,140,80))
         s.blit(sub_t, (TREINO_POS[0]-sub_t.get_width()//2, TREINO_POS[1]+54))
 
-        # ── Portal Chefão ──────────────────────────────────────────────────
         if self.game.boss_unlocked:
             glow_r = int(50 + 12*math.sin(self.tick*0.07))
             gs = pygame.Surface((glow_r*2+30, glow_r*2+30), pygame.SRCALPHA)
@@ -208,9 +197,19 @@ class MapScreen:
 
         self.player.draw(s)
 
-        # HUD
+        _rsz = (80, 80)
+        _reflect_surf = pygame.Surface(_rsz, pygame.SRCALPHA)
+        draw_character(_reflect_surf, _rsz[0] // 2, 18,
+                       scale=0.9, tick=self.player.tick,
+                       facing=self.player.facing, on_ground=True)
+        _reflect_surf = pygame.transform.flip(_reflect_surf, False, True)
+        _reflect_surf.set_alpha(35)
+        s.blit(_reflect_surf,
+               (int(self.player.x) - _rsz[0] // 2,
+                int(self.player.y) + 22))
+
         pygame.draw.rect(s, (0,0,0), (0,0,WIDTH,32))
-        sc = self.font_hud.render(f"⭐ {self.game.score} pts", True, YELLOW)
+        sc = self.font_hud.render(f"{self.game.score} pts", True, YELLOW)
         s.blit(sc, (10,5))
         if not self.game.boss_unlocked:
             prog = pygame.font.SysFont("Arial",13).render(

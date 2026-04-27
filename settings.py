@@ -51,7 +51,6 @@ REGION_COLORS = [
 REGION_ICONS = ["∫", "∞", "u", "∂", "∑"]
 TREINO_ICON = "📖"
 
-# === SISTEMA DE PONTOS ===
 PONTOS_POR_ACERTO_PRIMEIRA  = 15   # acerto de primeira
 PONTOS_POR_ACERTO_SEGUNDA   = 8    # acerto após erro
 PONTOS_BONUS_FASE_PERFEITA  = 20   # todas as questões de primeira

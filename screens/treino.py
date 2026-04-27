@@ -1,5 +1,4 @@
 import pygame
-import math
 import random
 from settings import *
 
@@ -100,7 +99,6 @@ class TreinoScreen:
         self.regions    = list(MANUSCRITO.keys())
         self.particles  = []
 
-        # ── Fontes criadas UMA VEZ ─────────────────────────────────────────
         self.f_header = pygame.font.SysFont("Arial", 24, bold=True)
         self.f_tab    = pygame.font.SysFont("Arial", 12, bold=True)
         self.f_title  = pygame.font.SysFont("Arial", 22, bold=True)
@@ -109,22 +107,18 @@ class TreinoScreen:
         self.f_hint   = pygame.font.SysFont("Arial", 13)
         self.f_nav    = pygame.font.SysFont("Arial", 20, bold=True)
 
-        # ── Botões ─────────────────────────────────────────────────────────
         self.btn_prev_r = pygame.Rect(10,          HEIGHT//2-20, 36, 40)
         self.btn_next_r = pygame.Rect(WIDTH-46,    HEIGHT//2-20, 36, 40)
         self.btn_prev_c = pygame.Rect(WIDTH//2-120, HEIGHT-52,  100, 34)
         self.btn_next_c = pygame.Rect(WIDTH//2+20,  HEIGHT-52,  100, 34)
         self.btn_voltar = pygame.Rect(WIDTH-160,    HEIGHT-52,  150, 34)
 
-        # ── Cache de surfaces de texto do card atual ───────────────────────
         self._cached_region = None
         self._cached_card   = None
-        self._card_surfs    = []   # lista de (surface, x, y)
+        self._card_surfs    = []
         self._tab_surfs     = []
 
         self._rebuild_cache()
-
-    # ── Cache ──────────────────────────────────────────────────────────────
 
     def _rebuild_cache(self):
         """Reconstrói as surfaces de texto apenas quando o card muda."""
@@ -140,17 +134,14 @@ class TreinoScreen:
         card_x, card_y = 60, 100
         card_w         = WIDTH - 120
 
-        # Número do card
         s = self.f_hint.render(
             f"Card {self.card_idx+1} / {len(self.current_cards)}",
             True, (140,120,60))
         self._card_surfs.append((s, card_x+12, card_y+10))
 
-        # Título
         s = self.f_title.render(self.current_card[0], True, YELLOW)
         self._card_surfs.append((s, card_x+12, card_y+30))
 
-        # Corpo
         lines = self.current_card[1].split("\n")
         by    = card_y + 66
         for line in lines:
@@ -162,7 +153,6 @@ class TreinoScreen:
             self._card_surfs.append((surf, card_x+20, by))
             by  += 22
 
-        # Tabs
         self._tab_surfs = []
         tab_w = (WIDTH-20) // len(self.regions)
         for i, reg in enumerate(self.regions):
@@ -170,16 +160,12 @@ class TreinoScreen:
             s   = self.f_tab.render(REGION_ICONS[i]+" "+reg[:12], True, col)
             self._tab_surfs.append((s, 10+i*tab_w+4, 67, i))
 
-    # ── Propriedades ──────────────────────────────────────────────────────
-
     @property
     def current_region(self):  return self.regions[self.region_idx]
     @property
     def current_cards(self):   return MANUSCRITO[self.current_region]
     @property
     def current_card(self):    return self.current_cards[self.card_idx]
-
-    # ── Navegação ─────────────────────────────────────────────────────────
 
     def _next_card(self):
         if self.card_idx < len(self.current_cards)-1: self.card_idx += 1
@@ -201,8 +187,6 @@ class TreinoScreen:
         self.card_idx   = 0
         self._rebuild_cache()
 
-    # ── Loop ──────────────────────────────────────────────────────────────
-
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -223,7 +207,6 @@ class TreinoScreen:
 
     def update(self):
         self.tick += 1
-        # Partículas — frequência reduzida
         if self.tick % 20 == 0:
             self.particles.append({
                 "x":    random.uniform(0, WIDTH),
@@ -240,19 +223,16 @@ class TreinoScreen:
     def draw(self):
         s = self.game.screen
 
-        # Fundo — gradiente simples
         s.fill((22, 17, 8))
-        for row in range(0, HEIGHT, 6):   # passo 6 em vez de 3
+        for row in range(0, HEIGHT, 6):
             t = row / HEIGHT
             pygame.draw.line(s,
                 (int(18+t*20), int(14+t*12), int(8+t*8)),
                 (0, row), (WIDTH, row))
 
-        # Partículas
         for p in self.particles:
             pygame.draw.circle(s, p["col"], (int(p["x"]), int(p["y"])), p["r"])
 
-        # Cabeçalho
         pygame.draw.rect(s, (30,22,10), (0,0,WIDTH,56))
         pygame.draw.line(s, YELLOW, (0,56),(WIDTH,56), 2)
         t = self.f_header.render("Manuscrito do Calculo", True, YELLOW)
@@ -262,7 +242,6 @@ class TreinoScreen:
             True, (140,120,60))
         s.blit(t, (WIDTH//2-t.get_width()//2, 40))
 
-        # Tabs
         tab_w = (WIDTH-20) // len(self.regions)
         for surf, tx, ty, i in self._tab_surfs:
             active = (i == self.region_idx)
@@ -272,7 +251,6 @@ class TreinoScreen:
                 pygame.draw.rect(s, WHITE, (10+i*tab_w, 60, tab_w-4, 28), 2, border_radius=6)
             s.blit(surf, (tx, ty))
 
-        # Card
         card_x, card_y, card_w, card_h = 60, 100, WIDTH-120, HEIGHT-200
         pygame.draw.rect(s, (10,8,4),  (card_x+5, card_y+5, card_w, card_h), border_radius=16)
         pygame.draw.rect(s, (38,30,14),(card_x,   card_y,   card_w, card_h), border_radius=16)
@@ -281,11 +259,9 @@ class TreinoScreen:
         pygame.draw.line(s, REGION_COLORS[self.region_idx],
             (card_x+12, card_y+56), (card_x+card_w-12, card_y+56), 1)
 
-        # Texto do card (cacheado)
         for surf, bx, by in self._card_surfs:
             s.blit(surf, (bx, by))
 
-        # Bolinhas indicadoras
         total     = len(self.current_cards)
         dot_y     = card_y + card_h - 18
         dot_start = WIDTH//2 - (total*16)//2
@@ -293,7 +269,6 @@ class TreinoScreen:
             col_d = YELLOW if i == self.card_idx else (60,50,30)
             pygame.draw.circle(s, col_d, (dot_start+i*16, dot_y), 5)
 
-        # Botões laterais de região
         mx, my = pygame.mouse.get_pos()
         for btn, lbl in [(self.btn_prev_r,"<"),(self.btn_next_r,">")]:
             bc = (70,55,20) if btn.collidepoint(mx,my) else (40,30,10)
@@ -302,7 +277,6 @@ class TreinoScreen:
             t = self.f_nav.render(lbl, True, YELLOW)
             s.blit(t, (btn.centerx-t.get_width()//2, btn.centery-t.get_height()//2))
 
-        # Botões inferiores
         btns = [
             (self.btn_prev_c, "< Anterior",      (50,40,10)),
             (self.btn_next_c, "Proximo >",        (50,40,10)),

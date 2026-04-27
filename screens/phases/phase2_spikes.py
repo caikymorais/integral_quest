@@ -15,7 +15,7 @@ class Phase2Spikes(BasePhase):
     def _build_level(self):
         q = QUESTIONS[self.region][self.q_index]
         self.player = PhysicsPlayer(WIDTH // 2 - 14, HEIGHT - 480)
-        self.last_platform = None  # última plataforma em que estava
+        self.last_platform = None
 
         n  = len(q["opts"])
         xs = [int(WIDTH * (i + 1) / (n + 1)) - 95 for i in range(n)]
@@ -49,7 +49,6 @@ class Phase2Spikes(BasePhase):
         self.spikes = [pygame.Rect(sx, HEIGHT - 52, 30, 52) for sx in range(0, WIDTH, 40)]
 
     def _get_current_platform(self):
-        """Retorna a plataforma de resposta em que o player está parado agora."""
         if not self.player.on_ground:
             return None
         pr = self.player.rect
@@ -60,7 +59,6 @@ class Phase2Spikes(BasePhase):
                 continue
             if p["state"] != "idle":
                 continue
-            # Player está em cima desta plataforma?
             if (pr.bottom >= p["rect"].top and
                     pr.bottom <= p["rect"].top + 20 and
                     pr.right  >  p["rect"].left + 10 and
@@ -80,7 +78,6 @@ class Phase2Spikes(BasePhase):
         flat = [{"rect": p["rect"]} for p in self.platforms if p["visible"]]
         self.player.update(keys, flat)
 
-        # Plataformas erradas caem
         for p in self.platforms:
             if not p["is_answer"] or not p["visible"]:
                 continue
@@ -90,7 +87,6 @@ class Phase2Spikes(BasePhase):
                 if p["rect"].y > HEIGHT + 60:
                     p["visible"] = False
 
-        # Espinhos matam
         for spike in self.spikes:
             if self.player.rect.colliderect(spike):
                 self.player.die()
@@ -103,10 +99,8 @@ class Phase2Spikes(BasePhase):
         if self.answered:
             return
 
-        # Detecta plataforma atual
         current = self._get_current_platform()
 
-        # Só processa quando ACABOU de pousar (era None, agora tem plataforma)
         if current is not None and current != self.last_platform:
             self.last_platform = current
             self.attempts += 1
@@ -130,7 +124,6 @@ class Phase2Spikes(BasePhase):
                     duration=90
                 )
 
-        # Reseta last_platform quando sai de cima
         if current is None:
             self.last_platform = None
 

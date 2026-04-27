@@ -50,7 +50,6 @@ class Button:
         w=int(self.rect.w*self.scale); h=int(self.rect.h*self.scale)
         r=pygame.Rect(self.rect.centerx-w//2,self.rect.centery-h//2,w,h)
         col=self.hover if hovered else self.color
-        # Sombra
         shadow=pygame.Rect(r.x+4,r.y+4,r.w,r.h)
         pygame.draw.rect(surface,(0,0,0),shadow,border_radius=14)
         pygame.draw.rect(surface,col,r,border_radius=14)
@@ -70,10 +69,9 @@ class MenuScreen:
         self.font_sub=pygame.font.SysFont("Arial",22)
         self.font_sm=pygame.font.SysFont("Arial",15)
         self.buttons=[
-            Button(WIDTH//2-130,360,260,58,"▶   Jogar",BLUE,BLUE_DARK),
-            Button(WIDTH//2-130,438,260,58,"✕   Sair",(150,30,30),(100,15,15)),
+            Button(WIDTH//2-130,360,260,58,"Jogar",BLUE,BLUE_DARK),
+            Button(WIDTH//2-130,438,260,58,"Sair",(150,30,30),(100,15,15)),
         ]
-        # Portais decorativos no menu
         self.portal_angles=[0]*5
 
     def handle_events(self):
@@ -92,15 +90,12 @@ class MenuScreen:
         s=self.game.screen
         s.fill(BG_COLOR)
 
-        # Estrelas
         for star in self.stars:
             tw=int(150+80*math.sin(self.tick*0.03+star.x))
             pygame.draw.circle(s,(tw,tw,tw),(int(star.x),int(star.y)),int(star.r))
 
-        # Partículas flutuantes
         for p in self.particles: p.draw(s)
 
-        # Portais decorativos pequenos
         portal_xs=[100,200,700,780,440]
         portal_ys=[500,350,500,350,520]
         for i,(px,py) in enumerate(zip(portal_xs,portal_ys)):
@@ -115,13 +110,11 @@ class MenuScreen:
             icon=pygame.font.SysFont("Arial",16,bold=True).render(REGION_ICONS[i],True,WHITE)
             s.blit(icon,(px-icon.get_width()//2,py-icon.get_height()//2))
 
-        # Glow do título
         glow=int(80+50*math.sin(self.tick*0.05))
         gs=pygame.Surface((560,100),pygame.SRCALPHA)
         pygame.draw.ellipse(gs,(*YELLOW,glow),(0,0,560,100))
         s.blit(gs,(WIDTH//2-280,100))
 
-        # Título com sombra
         for dx,dy,col in [(4,4,(0,0,0)),(0,0,YELLOW)]:
             t=self.font_title.render("Integral Quest",True,col)
             s.blit(t,(WIDTH//2-t.get_width()//2+dx,105+dy))
@@ -129,12 +122,11 @@ class MenuScreen:
         sub=self.font_sub.render("Explorando o Mundo das Integrais",True,GRAY)
         s.blit(sub,(WIDTH//2-sub.get_width()//2,182))
 
-        # Personagem grande animado
         draw_character(s,WIDTH//2,275,scale=1.9,tick=self.tick,on_ground=True)
 
         for btn in self.buttons: btn.draw(s)
 
         footer=self.font_sm.render(
-            "Disciplina: Resolução de Problemas Multivariáveis  |  Prof. Pedro Girotto",
+            "Disciplina: Computação Gráfica  |  Prof. Suzana Sousa",
             True,(60,60,80))
         s.blit(footer,(WIDTH//2-footer.get_width()//2,HEIGHT-22))

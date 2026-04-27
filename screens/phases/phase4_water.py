@@ -25,7 +25,6 @@ class Phase4Water(BasePhase):
         self.correct_dv = q["opts"][(q["correta"] + 1) % len(q["opts"])]
 
         self.platforms = [
-            # Plataformas sólidas de travessia — mais separadas das respostas
             {"rect": pygame.Rect(0,   HEIGHT - 120, 160, 18),
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
@@ -34,7 +33,6 @@ class Phase4Water(BasePhase):
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
              "visible": True, "base_y": float(HEIGHT - 120), "bob": 0.0, "side": 1},
-            # Plataforma segura central — player nasce aqui
             {"rect": pygame.Rect(330, HEIGHT - 320, 240, 18),
              "label": "", "opt": "", "correct": False, "state": "solid",
              "color": (50, 50, 70), "is_floor": True, "is_answer": False,
@@ -56,7 +54,6 @@ class Phase4Water(BasePhase):
                 "opt":       opt,
                 "correct":   is_correct,
                 "state":     "idle",
-                # Verde = gabarito (remova após testes)
                 "color":     GREEN if is_correct else (BLUE if side == 0 else PURPLE_DARK),
                 "is_floor":  False,
                 "is_answer": True,
@@ -97,15 +94,12 @@ class Phase4Water(BasePhase):
         flat = [{"rect": p["rect"]} for p in self.platforms if p["visible"]]
         self.player.update(keys, flat)
 
-        # Bob das plataformas de resposta
         for p in self.platforms:
             if p["is_answer"] and p["visible"]:
                 p["rect"].y = int(p["base_y"] + math.sin(self.tick * 0.025 + p["bob"]) * 5)
 
-        # Água sobe
         self.water_y -= self.water_speed
 
-        # Água mata
         if self.player.y + self.player.h >= self.water_y:
             self.player.die()
             return
@@ -168,7 +162,6 @@ class Phase4Water(BasePhase):
                 (int(8 + t*12), int(15 + t*20), int(30 + t*40)),
                 (0, row), (WIDTH, row))
 
-        # Divisória u / dv
         pygame.draw.line(s, (50, 50, 80), (WIDTH//2, 72), (WIDTH//2, HEIGHT - 60), 1)
         u_lbl = self.font.render("← escolha  u", True, CYAN)
         d_lbl = self.font.render("escolha dv  →", True, PURPLE)
@@ -212,18 +205,15 @@ class Phase4Water(BasePhase):
     def _extra_draw(self):
         s = self.game.screen
 
-        # Etapa atual
         stage_txt = f"Etapa: escolha  {'u' if self.stage == 'u' else 'dv'}"
         if self.chosen_u:
             stage_txt += f"   (u = {self.chosen_u} ✓)"
         lbl = self.font.render(stage_txt, True, YELLOW)
         s.blit(lbl, (WIDTH//2 - lbl.get_width()//2, 95))
 
-        # Fórmula
         formula = self.font.render("∫u dv  =  uv  −  ∫v du", True, GRAY)
         s.blit(formula, (WIDTH//2 - formula.get_width()//2, 115))
 
-        # Legenda das plataformas seguras
         hint = self.font_sm.render(
             "Plataformas cinzas = zona segura  |  Coloridas = respostas",
             True, (120, 120, 140))

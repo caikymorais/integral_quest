@@ -29,7 +29,6 @@ class ResultsScreen:
         ]
 
     def _leave_to_map(self):
-        # limpa aviso para não repetir na próxima vez
         self.game.boss_just_unlocked = False
         self.game.go_to_map()
 
@@ -72,18 +71,15 @@ class ResultsScreen:
         pct = self.hits / self.total if self.total else 0
         ok  = pct >= 0.7
         col = GREEN if ok else RED
-        msg = "Região Completa! 🎉" if ok else f"Precisa de 70% — você fez {pct*100:.0f}%"
+        msg = "Região Completa!" if ok else f"Precisa de 70% — você fez {pct*100:.0f}%"
 
-        # Confetes
         if ok:
             for x, y, vx, vy, c in self.confetti:
                 pygame.draw.rect(s, c, (int(x), int(y), 6, 6))
 
-        # Personagem
         draw_character(s, WIDTH//2, HEIGHT//2 - 40, scale=2.0,
                        tick=self.tick, on_ground=True)
 
-        # Glow resultado
         if ok:
             gs = pygame.Surface((400, 60), pygame.SRCALPHA)
             glow = int(60 + 40 * math.sin(self.tick * 0.08))
@@ -98,12 +94,11 @@ class ResultsScreen:
         center(msg, 85, self.font, col)
         center(f"Acertos: {self.hits}/{self.total}  ({pct*100:.0f}%)",
                130, self.font_sm, WHITE)
-        center(f"Pontuação total: ⭐ {self.game.score}",
+        center(f"Pontuação total: {self.game.score}",
                162, self.font_sm, YELLOW)
         center("10pts = acerto de primeira  |  5pts = acerto após erro",
                200, self.font_hint, (100,100,120))
 
-        # Aviso de chefão liberado (mostra só quando acabou de liberar)
         if self.game.boss_just_unlocked:
             box = pygame.Rect(WIDTH//2 - 260, 220, 520, 90)
             pygame.draw.rect(s, (10, 35, 10), box, border_radius=14)
@@ -121,7 +116,6 @@ class ResultsScreen:
             s.blit(t2, (box.centerx - t2.get_width()//2, box.y + 36))
             s.blit(t3, (box.centerx - t3.get_width()//2, box.y + 60))
 
-        # Botões
         for btn, lbl, c in [
             (self.btn_map, "[M]  Voltar ao Mapa", BLUE),
             (self.btn_rep, "[R]  Repetir Fase",   PURPLE),

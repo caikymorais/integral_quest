@@ -30,9 +30,6 @@ class Lightning:
 
 
 class Phase5Lightning(BasePhase):
-    """Raios caem nas posições erradas. Player pula na plataforma com o valor correto
-       de F(b)-F(a). Gráfico da função é desenhado no fundo."""
-
     def _setup(self):
         self._build_level()
 
@@ -141,7 +138,6 @@ class Phase5Lightning(BasePhase):
                 (WIDTH, row)
             )
 
-        # Gráfico decorativo
         ox, oy = 80, HEIGHT - 62
         scale_x = 60
 
@@ -174,7 +170,6 @@ class Phase5Lightning(BasePhase):
     def _draw_hazards(self):
         s = self.game.screen
 
-        # proteção extra para evitar acesso fora do limite ao finalizar a última questão
         if self.q_index >= len(QUESTIONS[self.region]):
             return
 
@@ -205,7 +200,7 @@ class Phase5Lightning(BasePhase):
     def _extra_draw(self):
         s = self.game.screen
         hint = self.font_sm.render(
-            "⚡ Evite os raios! Pule no valor correto de F(b)-F(a)",
+            "Evite os raios! Pule no valor correto de F(b)-F(a)",
             True,
             YELLOW
         )

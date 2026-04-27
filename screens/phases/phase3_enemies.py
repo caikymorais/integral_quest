@@ -1,4 +1,4 @@
-import pygame, math, random
+import pygame, random
 from settings import *
 from screens.base_phase import BasePhase
 from screens.player import PhysicsPlayer
@@ -26,7 +26,6 @@ class Enemy:
         r = pygame.Rect(self.rect.x, self.rect.y+self.squash, self.rect.w, h)
         pygame.draw.rect(surface, self.color, r, border_radius=10)
         pygame.draw.rect(surface, WHITE, r, 2, border_radius=10)
-        # Olhinhos
         pygame.draw.circle(surface, WHITE,(r.x+20, r.y+14),6)
         pygame.draw.circle(surface, WHITE,(r.x+r.w-20, r.y+14),6)
         pygame.draw.circle(surface, BLACK,(r.x+21, r.y+14),3)
@@ -36,20 +35,15 @@ class Enemy:
 
 
 class Phase3Enemies(BasePhase):
-    """Inimigos andam pelo chão. Player pula em cima do correto para destruí-lo.
-       Pular no errado tira uma vida."""
-
     def _setup(self):
         self._build_level()
 
     def _build_level(self):
         q = QUESTIONS[self.region][self.q_index]
         self.player = PhysicsPlayer(WIDTH//2-14, HEIGHT-200)
-        # Plataforma chão
         self.platforms = [{"rect": pygame.Rect(0, HEIGHT-70, WIDTH, 20),
                            "label":"","correct":False,"state":"idle",
                            "color":DARK_GRAY,"is_floor":True}]
-        # Plataformas flutuantes laterais
         for i in range(3):
             self.platforms.append({"rect": pygame.Rect(i*280+40, HEIGHT-230-i*40, 160, 18),
                                    "label":"","correct":False,"state":"idle",
@@ -79,14 +73,12 @@ class Phase3Enemies(BasePhase):
         for e in self.enemies:
             if e.alive: e.update()
 
-        # Player cai no buraco
         if self.player.y > HEIGHT + 20:
             self.player.die(); return
 
         if not self.answered:
             for e in self.enemies:
                 if not e.alive: continue
-                # Pular em cima
                 if (self.player.vy > 0 and
                         self.player.rect.colliderect(e.rect) and
                         self.player.y + self.player.h - self.player.vy <= e.rect.y + 6):
@@ -108,7 +100,6 @@ class Phase3Enemies(BasePhase):
                         self.player.die()
                     break
 
-                # Colidir de lado
                 if (self.player.rect.colliderect(e.rect) and
                         not (self.player.y + self.player.h - self.player.vy <= e.rect.y + 6)):
                     self.player.die(); return
@@ -118,7 +109,6 @@ class Phase3Enemies(BasePhase):
         for row in range(0,HEIGHT,3):
             t=row/HEIGHT
             pygame.draw.line(s,(int(15+t*15),int(10+t*10),int(30+t*20)),(0,row),(WIDTH,row))
-        # Tijolos de fundo
         for bx in range(0,WIDTH,60):
             for by in range(72,HEIGHT-70,30):
                 pygame.draw.rect(s,(25,20,35),(bx,by,58,28),1)

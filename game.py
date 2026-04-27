@@ -33,12 +33,9 @@ class Game:
         pygame.quit()
 
     def _current_screen(self):
-        """Retorna o objeto de tela atual — suporta string OU objeto direto."""
         if isinstance(self.state, str):
             return self.screens.get(self.state)
-        return self.state   # objeto direto (boss, treino, victory…)
-
-    # ── Navegação ──────────────────────────────────────────────────────────
+        return self.state
 
     def go_to_menu(self):
         self.state = "menu"
@@ -71,17 +68,15 @@ class Game:
 
     def go_to_treino(self):
         from screens.treino import TreinoScreen
-        self.state = TreinoScreen(self)   # objeto direto — ok com _current_screen
+        self.state = TreinoScreen(self)
 
     def go_to_boss(self):
         from screens.phases.phase_boss import PhaseBoss
-        self.state = PhaseBoss(self)      # objeto direto — ok com _current_screen
+        self.state = PhaseBoss(self)
 
     def go_to_victory(self):
         from screens.victory import VictoryScreen
-        self.state = VictoryScreen(self)  # objeto direto — ok com _current_screen
-
-    # ── Lógica de jogo ─────────────────────────────────────────────────────
+        self.state = VictoryScreen(self)
 
     def unlock_next(self, region_name):
         idx = REGIONS.index(region_name)
@@ -89,7 +84,6 @@ class Game:
             self.unlocked[idx + 1] = True
 
     def check_boss_unlock(self):
-        """Libera o chefão somente se TODAS as fases foram concluídas e pontos suficientes."""
         self.boss_just_unlocked = False
         all_done = all(self.completed)
         if all_done and self.score >= PONTOS_MINIMOS_CHEFAO and not self.boss_unlocked:

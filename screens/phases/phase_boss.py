@@ -195,7 +195,6 @@ class PhaseBoss(BasePhase):
     LIVES = 5
 
     def __init__(self, game):
-        # Inicializa manualmente para não exigir 'region'
         self.game           = game
         self.region         = "Chefão"
         self.q_index        = 0
@@ -344,7 +343,7 @@ class PhaseBoss(BasePhase):
                 if self.boss.hp <= 0:
                     self.boss_beaten    = True
                     self.feedback_timer = 180
-                    self.feedback_text  = "🏆 CHEFÃO DERROTADO! Você dominou o Cálculo!"
+                    self.feedback_text  = "CHEFÃO DERROTADO! Você dominou o Cálculo!"
                     self.feedback_color = YELLOW
                     self.game.score    += 50
                     return
@@ -475,8 +474,8 @@ class PhaseBoss(BasePhase):
             s.blit(ov, (0, 0))
             f1 = pygame.font.SysFont("Arial", 52, bold=True)
             f2 = pygame.font.SysFont("Arial", 22)
-            t1 = f1.render("🏆 VITÓRIA FINAL!", True, YELLOW)
-            t2 = f2.render(f"Pontuação total: ⭐ {self.game.score}", True, WHITE)
+            t1 = f1.render("VITÓRIA FINAL!", True, YELLOW)
+            t2 = f2.render(f"Pontuação total: {self.game.score}", True, WHITE)
             t3 = f2.render("Pressione qualquer tecla para continuar...", True, GRAY)
             s.blit(t1, (WIDTH//2 - t1.get_width()//2, HEIGHT//2 - 80))
             s.blit(t2, (WIDTH//2 - t2.get_width()//2, HEIGHT//2))

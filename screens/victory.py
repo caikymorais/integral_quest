@@ -16,7 +16,6 @@ class VictoryScreen:
         self.font_btn    = pygame.font.SysFont("Arial", 22, bold=True)
         self.btn_restart = pygame.Rect(WIDTH//2 - 200, HEIGHT - 130, 180, 52)
         self.btn_menu    = pygame.Rect(WIDTH//2 + 20,  HEIGHT - 130, 180, 52)
-        # Confetes
         self.confetti = [
             [random.randint(0, WIDTH),
              random.randint(-HEIGHT, 0),
@@ -25,7 +24,6 @@ class VictoryScreen:
              random.choice([RED, YELLOW, GREEN, CYAN, ORANGE, PURPLE])]
             for _ in range(120)
         ]
-        # Estrelas
         self.stars = [(random.randint(0, WIDTH),
                        random.randint(0, HEIGHT),
                        random.uniform(0.5, 2.0)) for _ in range(80)]
@@ -59,52 +57,42 @@ class VictoryScreen:
         s = self.game.screen
         s.fill(BG_COLOR)
 
-        # Fundo gradiente festivo
         for row in range(0, HEIGHT, 3):
             t = row / HEIGHT
             pygame.draw.line(s,
                 (int(10 + t*15), int(5 + t*8), int(30 + t*25)),
                 (0, row), (WIDTH, row))
 
-        # Estrelas
         for sx, sy, sr in self.stars:
             tw = int(100 + 80 * math.sin(self.tick * 0.04 + sx))
             pygame.draw.circle(s, (tw, tw, tw), (sx, sy), int(sr))
 
-        # Confetes
         for c in self.confetti:
             pygame.draw.rect(s, c[4], (int(c[0]), int(c[1]), 8, 8))
 
-        # Glow título
         glow = int(70 + 50 * math.sin(self.tick * 0.06))
         gs   = pygame.Surface((700, 120), pygame.SRCALPHA)
         pygame.draw.ellipse(gs, (255, 200, 0, glow), (0, 0, 700, 120))
         s.blit(gs, (WIDTH//2 - 350, 50))
 
-        # Título
         for dx, dy, col in [(4, 4, BLACK), (0, 0, YELLOW)]:
-            t1 = self.font_big.render("🏆 VOCÊ VENCEU! 🏆", True, col)
+            t1 = self.font_big.render("VOCÊ VENCEU!", True, col)
             s.blit(t1, (WIDTH//2 - t1.get_width()//2 + dx, 60 + dy))
 
-        # Subtítulo
         sub = self.font_med.render("O Monstro do Cálculo foi derrotado!", True, ORANGE)
         s.blit(sub, (WIDTH//2 - sub.get_width()//2, 130))
 
-        # Personagem comemorando
         draw_character(s, WIDTH//2, 260,
                        scale=2.2, tick=self.tick, on_ground=True)
 
-        # Pontuação
         score_txt = self.font_med.render(
-            f"Pontuação Final: ⭐ {self.game.score}", True, YELLOW)
+            f"Pontuação Final: {self.game.score}", True, YELLOW)
         s.blit(score_txt, (WIDTH//2 - score_txt.get_width()//2, 330))
 
-        # Ranking
         rank, rank_col = self._get_rank()
         rank_txt = self.font_med.render(f"Classificação: {rank}", True, rank_col)
         s.blit(rank_txt, (WIDTH//2 - rank_txt.get_width()//2, 368))
 
-        # Estatísticas
         stats = [
             f"Fases completadas: {sum(1 for u in self.game.unlocked[1:] if u)} / {len(REGIONS)}",
             f"Chefão derrotado: {'✓ SIM!' if self.game.boss_unlocked else '✗ NÃO'}",
@@ -113,7 +101,6 @@ class VictoryScreen:
             t = self.font_sm.render(st, True, GRAY)
             s.blit(t, (WIDTH//2 - t.get_width()//2, 408 + i * 26))
 
-        # Botões
         mx, my = pygame.mouse.get_pos()
         for btn, lbl, col in [
             (self.btn_restart, "[R]  Jogar Novamente", GREEN_DARK),
@@ -130,10 +117,10 @@ class VictoryScreen:
     def _get_rank(self):
         score = self.game.score
         if score >= 250:
-            return "⭐ MESTRE DO CÁLCULO", YELLOW
+            return "MESTRE DO CÁLCULO", YELLOW
         elif score >= 180:
-            return "🥇 EXPERT",           ORANGE
+            return "EXPERT",           ORANGE
         elif score >= 120:
-            return "🥈 AVANÇADO",         CYAN
+            return "AVANÇADO",         CYAN
         else:
-            return "🥉 INICIANTE",        GRAY
+            return "INICIANTE",        GRAY
